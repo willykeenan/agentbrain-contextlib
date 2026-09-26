@@ -200,3 +200,11 @@ Python 3.9+, standard library only. See [CONTRIBUTING.md](CONTRIBUTING.md) and [
 Apache-2.0, copyright KE Studios. [SECURITY.md](SECURITY.md) for reports.
 
 ContextLib is the open library layer of AgentBrain (agentrooms.io).
+
+## Run with Docker
+
+The image is published at `ghcr.io/willykeenan/agentbrain-contextlib` for Apple silicon and Intel. Mount your library at `/library`:
+
+```bash
+claude mcp add contextlib -- docker run -i --rm --user "$(id -u):$(id -g)" -v ~/ContextLib:/library ghcr.io/willykeenan/agentbrain-contextlib mcp --identity you
+```
