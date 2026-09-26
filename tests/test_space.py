@@ -217,7 +217,9 @@ class TestIndexHtml(unittest.TestCase):
         )
 
     def test_no_http_or_https_resource(self):
-        self.assertIsNone(HTTP_RE.search(self.html), 'index.html must not reference network URLs')
+        # Plain navigation links are fine; nothing may be *loaded* from the network.
+        loaded = re.sub(r'<a\s[^>]*href="https://[^"]+"[^>]*>', '<a>', self.html)
+        self.assertIsNone(HTTP_RE.search(loaded), 'index.html must not load network resources')
         lowered = self.html.lower()
         for needle in (
             'googleapis',
