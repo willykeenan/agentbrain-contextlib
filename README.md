@@ -2,6 +2,12 @@
 
 **A project library that outlives every agent session.**
 
+![The sample library rendered read-only: project brief, current decisions, open requirements and key facts](docs/images/sample-library.png)
+
+<sub>Real screenshot of the sample library (an invented project).</sub>
+
+<table><tr><td width="50%"><img src="docs/images/cli.png" alt="A ctxlib session: an owner's decision lands current, an agent's lesson waits in the inbox, a secret is refused, and doctor passes"><br><sub>A ctxlib session: an owner's decision lands current, an agent's lesson waits in the inbox, a secret is refused, and doctor passes.</sub></td></tr></table>
+
 Each project's knowledge — decisions, requirements, facts, lessons, glossary, sources and returned work — is stored as plain Markdown files with a small front-matter block, in one folder per project. The folders can sit on an external SSD. A person can understand a project from Finder alone. Agents read and write the same files through a CLI (`ctxlib`) and an MCP server (`context_*` tools). Any database is a search index rebuilt from the files, never the source of truth.
 
 It is the open core of the context plugin of [AgentBrain](https://agentrooms.io).
