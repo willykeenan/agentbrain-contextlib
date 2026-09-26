@@ -2,6 +2,7 @@
 #   MCP (stdio):  docker run -i --rm --user "$(id -u):$(id -g)" -v ~/ContextLib:/library \
 #                   ghcr.io/willykeenan/agentbrain-contextlib mcp --identity you
 FROM python:3.12-slim
+LABEL io.modelcontextprotocol.server.name="io.github.willykeenan/agentbrain-contextlib"
 WORKDIR /app
 COPY . .
 RUN pip install --no-cache-dir . && mkdir -p /library && chmod 777 /library

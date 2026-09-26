@@ -1,0 +1,53 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.willykeenan/agentbrain-contextlib",
+  "title": "ContextLib",
+  "description": "A project's long-term memory as plain Markdown files, with an append-only, tamper-evident log.",
+  "version": "0.1.0",
+  "repository": {
+    "url": "https://github.com/willykeenan/agentbrain-contextlib",
+    "source": "github"
+  },
+  "websiteUrl": "https://huggingface.co/spaces/willykeenan/contextlib",
+  "packages": [
+    {
+      "registryType": "oci",
+      "identifier": "ghcr.io/willykeenan/agentbrain-contextlib:0.1.0",
+      "runtimeHint": "docker",
+      "transport": {
+        "type": "stdio"
+      },
+      "runtimeArguments": [
+        {
+          "type": "named",
+          "name": "-v",
+          "value": "{library_dir}:/library",
+          "variables": {
+            "library_dir": {
+              "description": "Host folder of your ContextLib library",
+              "default": "~/ContextLib",
+              "isRequired": true
+            }
+          }
+        }
+      ],
+      "packageArguments": [
+        {
+          "type": "positional",
+          "value": "mcp"
+        },
+        {
+          "type": "named",
+          "name": "--identity",
+          "value": "{identity}",
+          "variables": {
+            "identity": {
+              "description": "Who this server writes as, e.g. claude:project",
+              "isRequired": true
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
