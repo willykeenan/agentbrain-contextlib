@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+**/.contextlib/index.sqlite
+build/
+dist/
+*.egg-info/
+.DS_Store
+**/.contextlib/locks/

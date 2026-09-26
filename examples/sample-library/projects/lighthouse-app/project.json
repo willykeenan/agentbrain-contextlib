@@ -1,0 +1,19 @@
+{
+  "slug": "lighthouse-app",
+  "name": "Lighthouse App",
+  "purpose": "Harbor dashboard that coordinates lamp status, fog signals, and vessel traffic for a fictional headland light.",
+  "created": "2026-09-01T12:00:00Z",
+  "owners": [
+    "mara"
+  ],
+  "review_defaults": {
+    "decision": 180,
+    "requirement": null,
+    "fact": 30,
+    "lesson": 365,
+    "glossary": 365,
+    "source": 90,
+    "return": null,
+    "brief-note": 30
+  }
+}

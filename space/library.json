@@ -1,0 +1,498 @@
+{
+  "format": "contextlib/1",
+  "library": {
+    "created": "2026-09-01T12:00:00Z",
+    "format": "contextlib/1",
+    "library_id": "3f1a0c8e-9b24-4d6a-8e71-2c0b5d4a91f0"
+  },
+  "projects": [
+    {
+      "brief": "# Lighthouse App\n\n**Purpose:** Harbor dashboard that coordinates lamp status, fog signals, and vessel traffic for a fictional headland light.\n\n**Generated:** 2026-09-26T16:14:46Z\n\n## Current decisions\n\n- **Use keeper logs as the lamp-status source of truth** — Decision: Lamp status on the harbor board is taken from keeper logs, not from AIS.\n\n## Open requirements\n\n- **Fog-signal schedule must work unplugged** — Requirement: The fog-signal schedule can be read and updated with the SSD unplugged and with no network.\n- **Show live lamp character on the harbor board** — Requirement: The harbor board shows the current lamp character (for example Fl W 15s), the time it was signed, and wh...\n\n## Key facts\n\n- Fact: Mean tidal range at the headland is 3.2 metres.\n- Fact: The headland lamp character is Fl W 15s — a white flash every 15 seconds.\n\n## Recent returns\n\n- **Keeper trial 20 Sep 2026** — Return: First keeper trial, 20 September 2026.\n\n## Review due\n\n0 records due on or before 2026-09-26.\nNext review 2026-10-14.\n\n## Glossary (short)\n\n- **character** — The published flash pattern of a light, written in the light-list notation (for example Fl W 15s).\n- **watch** — A four-hour keeper shift. The harbor board groups log lines by watch.\n",
+      "meta": {
+        "created": "2026-09-01T12:00:00Z",
+        "name": "Lighthouse App",
+        "owners": [
+          "mara"
+        ],
+        "purpose": "Harbor dashboard that coordinates lamp status, fog signals, and vessel traffic for a fictional headland light.",
+        "review_defaults": {
+          "brief-note": 30,
+          "decision": 180,
+          "fact": 30,
+          "glossary": 365,
+          "lesson": 365,
+          "requirement": null,
+          "return": null,
+          "source": 90
+        },
+        "slug": "lighthouse-app"
+      },
+      "records": [
+        {
+          "body": "**Note:** Week of 21 September — lamp board is live; fog form is the open gap.\n\n**Load in brief:** Harbor masters should see the two current requirements and the keeper-trial return.\n\n**Review:** Revisit after the next fog, or by 2026-10-21.\n",
+          "meta": {
+            "author": "mara",
+            "body_sha256": "a956bf83ef17fa5288ee5d75f5fe1cb2750c7615c6c4951818e9d0bad8b39a0c",
+            "created": "2026-09-21T09:30:00Z",
+            "evidence": [
+              {
+                "ref": "project:BRIEF.md"
+              },
+              {
+                "ref": "project:returns/2026-09-20_keeper-trial-20-sep-2026_e5f7.md"
+              }
+            ],
+            "id": "note-20260921-a7b8",
+            "project": "lighthouse-app",
+            "review_by": "2026-10-21",
+            "scope": {
+              "lane": "brief",
+              "team": "harbor-master"
+            },
+            "sensitivity": "normal",
+            "status": "current",
+            "superseded_by": null,
+            "supersedes": [],
+            "tags": [
+              "brief",
+              "weekly"
+            ],
+            "title": "Week of 21 Sep briefing",
+            "type": "brief-note"
+          },
+          "path": "notes/2026-09-21_week-of-21-sep-briefing_a7b8.md",
+          "supersession_chain": [
+            "note-20260921-a7b8"
+          ]
+        },
+        {
+          "body": "**Return:** First keeper trial, 20 September 2026.\n\n**User outcome:** Two keepers ran a full watch using the local library on an SSD. Lamp status stayed current. Fog events were logged on paper when the hut Wi-Fi dropped.\n\n**Remaining gaps:** Fog form still posted to the WAN first; offline queue was a prototype.\n\n**Next actor:** keepers, to trial the offline form on the next fog.\n",
+          "meta": {
+            "author": "service:capture",
+            "body_sha256": "158a7071f26531af7cede68aff3554820e0e28f164d806352d7ab6f1d9285d25",
+            "created": "2026-09-20T22:00:00Z",
+            "evidence": [
+              {
+                "ref": "ssd:exports/keeper-trial.zip"
+              },
+              {
+                "ref": "room:harbor#12"
+              },
+              {
+                "ref": "note:two keepers, one full watch, SSD in the hut"
+              }
+            ],
+            "id": "ret-20260920-e5f7",
+            "project": "lighthouse-app",
+            "review_by": null,
+            "scope": {
+              "lane": "trial",
+              "team": "keepers"
+            },
+            "sensitivity": "normal",
+            "status": "current",
+            "superseded_by": null,
+            "supersedes": [],
+            "tags": [
+              "trial",
+              "keepers",
+              "ssd"
+            ],
+            "title": "Keeper trial 20 Sep 2026",
+            "type": "return"
+          },
+          "path": "returns/2026-09-20_keeper-trial-20-sep-2026_e5f7.md",
+          "supersession_chain": [
+            "ret-20260920-e5f7"
+          ]
+        },
+        {
+          "body": "**Lesson:** Fog-log forms that require a network round-trip get skipped. Offline-first forms get filled.\n\n**Context:** During the 20 Sep keeper trial, three fog events were missing from the server log and present in the paper book.\n\n**What to do:** Write records to local files; sync when the link is back. Never block a keeper on HTTP.\n",
+          "meta": {
+            "author": "mara",
+            "body_sha256": "d8ddd1d4d3bc81ffb4d2c01cdc6b277a6f44f4be76e7c6ed3e834451abdc6dbf",
+            "created": "2026-09-20T21:10:00Z",
+            "evidence": [
+              {
+                "ref": "project:returns/2026-09-20_keeper-trial-20-sep-2026_e5f7.md"
+              },
+              {
+                "ref": "note:three fog events in the paper book, missing from the WAN log"
+              }
+            ],
+            "id": "les-20260920-56ef",
+            "project": "lighthouse-app",
+            "review_by": "2027-09-20",
+            "scope": {
+              "lane": "fog-signal",
+              "team": "keepers"
+            },
+            "sensitivity": "normal",
+            "status": "current",
+            "superseded_by": null,
+            "supersedes": [],
+            "tags": [
+              "fog",
+              "offline",
+              "forms"
+            ],
+            "title": "Offline-first forms beat networked fog logs",
+            "type": "lesson"
+          },
+          "path": "lessons/2026-09-20_offline-first-forms-beat-networked-fog-logs_56ef.md",
+          "supersession_chain": [
+            "les-20260920-56ef"
+          ]
+        },
+        {
+          "body": "**Fact:** Mean tidal range at the headland is 3.2 metres.\n\n**How we know:** Harbour authority tide tables for 2026, station Headland Steps.\n\n**How to verify:** Compare a spring-tide high/low pair against 3.2 m ± 0.2 m.\n",
+          "meta": {
+            "author": "claude:harbor-trial",
+            "body_sha256": "885875ea7956fe4c6712549c39eb73dd9c8dd3dcb7276f180291bd18cabb3b26",
+            "created": "2026-09-14T18:20:00Z",
+            "evidence": [
+              {
+                "ref": "note:Harbour authority tide tables 2026, station Headland Steps"
+              },
+              {
+                "ref": "url:https://www.iala.int/"
+              }
+            ],
+            "id": "fact-20260914-34cd",
+            "project": "lighthouse-app",
+            "review_by": "2026-10-14",
+            "scope": {
+              "lane": "tides",
+              "team": "harbor-master"
+            },
+            "sensitivity": "normal",
+            "status": "current",
+            "superseded_by": null,
+            "supersedes": [],
+            "tags": [
+              "tide",
+              "headland"
+            ],
+            "title": "Mean tidal range at the headland is 3.2 metres",
+            "type": "fact"
+          },
+          "path": "facts/2026-09-14_mean-tidal-range-at-the-headland-is-3-2-metres_34cd.md",
+          "supersession_chain": [
+            "fact-20260914-34cd"
+          ]
+        },
+        {
+          "body": "**Fact:** The headland lamp character is Fl W 15s — a white flash every 15 seconds.\n\n**How we know:** Signed keeper log 2026-09-14 and the published light list.\n\n**How to verify:** A 60-second observation contains four flashes.\n",
+          "meta": {
+            "author": "mara",
+            "body_sha256": "94802d454528eac4765ce48e005f0b0db98544097b703518d126c9e87e1d5ab8",
+            "created": "2026-09-14T18:05:00Z",
+            "evidence": [
+              {
+                "ref": "note:signed keeper log 2026-09-14 watch 2"
+              },
+              {
+                "ref": "url:https://www.iala.int/"
+              }
+            ],
+            "id": "fact-20260914-12ab",
+            "project": "lighthouse-app",
+            "review_by": "2026-10-14",
+            "scope": {
+              "lane": "harbor-board",
+              "team": "keepers"
+            },
+            "sensitivity": "normal",
+            "status": "current",
+            "superseded_by": null,
+            "supersedes": [],
+            "tags": [
+              "lamp",
+              "character"
+            ],
+            "title": "Lamp character is Fl W 15s",
+            "type": "fact"
+          },
+          "path": "facts/2026-09-14_lamp-character-is-fl-w-15s_12ab.md",
+          "supersession_chain": [
+            "fact-20260914-12ab"
+          ]
+        },
+        {
+          "body": "**Requirement:** The fog-signal schedule can be read and updated with the SSD unplugged and with no network.\n\n**Why:** Fog does not wait for a WAN. Keepers already work from the hut with a local clone of the library.\n\n**Acceptance:** `ctxlib brief lighthouse-app` and the fog panel both load from local files. An update written offline syncs later with `ctxlib sync`.\n",
+          "meta": {
+            "author": "mara",
+            "body_sha256": "07bd91d04a7fdf28b5227669657a06f76816591fd687918f8fc596366c8e6c26",
+            "created": "2026-09-13T08:40:00Z",
+            "evidence": [
+              {
+                "ref": "note:hut Wi-Fi drops in fog"
+              },
+              {
+                "ref": "ssd:exports/keeper-trial.zip"
+              },
+              {
+                "ref": "room:harbor#4"
+              }
+            ],
+            "id": "req-20260913-789a",
+            "project": "lighthouse-app",
+            "review_by": null,
+            "scope": {
+              "lane": "fog-signal",
+              "team": "keepers"
+            },
+            "sensitivity": "normal",
+            "status": "current",
+            "superseded_by": null,
+            "supersedes": [],
+            "tags": [
+              "fog",
+              "offline",
+              "ssd"
+            ],
+            "title": "Fog-signal schedule must work unplugged",
+            "type": "requirement"
+          },
+          "path": "requirements/2026-09-13_fog-signal-schedule-must-work-unplugged_789a.md",
+          "supersession_chain": [
+            "req-20260913-789a"
+          ]
+        },
+        {
+          "body": "**Term:** watch\n\n**Meaning:** A four-hour keeper shift. The harbor board groups log lines by watch.\n\n**Do not confuse with:** A vessel-traffic watch officer, which is a different roster.\n",
+          "meta": {
+            "author": "mara",
+            "body_sha256": "7cddf40411e99810e085f22606246e8161655ef69e883ddc9d9ea80cac389b00",
+            "created": "2026-09-12T11:05:00Z",
+            "evidence": [
+              {
+                "ref": "note:four-hour keeper shift on the headland roster"
+              },
+              {
+                "ref": "project:GLOSSARY.md"
+              }
+            ],
+            "id": "glo-20260912-90b2",
+            "project": "lighthouse-app",
+            "review_by": "2027-09-12",
+            "scope": {
+              "lane": "roster",
+              "team": "keepers"
+            },
+            "sensitivity": "normal",
+            "status": "current",
+            "superseded_by": null,
+            "supersedes": [],
+            "tags": [
+              "glossary",
+              "roster"
+            ],
+            "title": "watch",
+            "type": "glossary"
+          },
+          "path": "glossary/2026-09-12_watch_90b2.md",
+          "supersession_chain": [
+            "glo-20260912-90b2"
+          ]
+        },
+        {
+          "body": "**Term:** character\n\n**Meaning:** The published flash pattern of a light, written in the light-list notation (for example Fl W 15s).\n\n**Do not confuse with:** The AIS aid-to-navigation type, which names the structure, not the flash pattern.\n",
+          "meta": {
+            "author": "mara",
+            "body_sha256": "405ea183ec43bbfda3e1a8d818958eb1a6d061fbfad818745893c6f1e4a4938e",
+            "created": "2026-09-12T11:00:00Z",
+            "evidence": [
+              {
+                "ref": "url:https://www.iala.int/"
+              },
+              {
+                "ref": "note:light-list notation Fl W 15s"
+              }
+            ],
+            "id": "glo-20260912-78a1",
+            "project": "lighthouse-app",
+            "review_by": "2027-09-12",
+            "scope": {
+              "lane": "harbor-board",
+              "team": "keepers"
+            },
+            "sensitivity": "normal",
+            "status": "current",
+            "superseded_by": null,
+            "supersedes": [],
+            "tags": [
+              "glossary",
+              "lamp"
+            ],
+            "title": "character",
+            "type": "glossary"
+          },
+          "path": "glossary/2026-09-12_character_78a1.md",
+          "supersession_chain": [
+            "glo-20260912-78a1"
+          ]
+        },
+        {
+          "body": "**Requirement:** The harbor board shows the current lamp character (for example Fl W 15s), the time it was signed, and whether it is stale.\n\n**Why:** A harbor master glancing at the wall must know what the light is doing without opening the log.\n\n**Acceptance:** A signed log line appears on the board. A log older than 15 minutes shows a stale badge. The character string matches the glossary term.\n",
+          "meta": {
+            "author": "mara",
+            "body_sha256": "9fe726fcc9a05e428d8a37ba1f0c15f8aa0460b8b71cbe4912e924b88fa704dd",
+            "created": "2026-09-12T10:15:00Z",
+            "evidence": [
+              {
+                "ref": "project:decisions/2026-09-12_use-keeper-logs-as-the-lamp-status-source-of-truth_a1b2.md"
+              },
+              {
+                "ref": "note:harbor master wall glance in under two seconds"
+              }
+            ],
+            "id": "req-20260912-e5f6",
+            "project": "lighthouse-app",
+            "review_by": null,
+            "scope": {
+              "lane": "harbor-board",
+              "team": "harbor-master"
+            },
+            "sensitivity": "normal",
+            "status": "current",
+            "superseded_by": null,
+            "supersedes": [],
+            "tags": [
+              "lamp",
+              "board",
+              "character"
+            ],
+            "title": "Show live lamp character on the harbor board",
+            "type": "requirement"
+          },
+          "path": "requirements/2026-09-12_show-live-lamp-character-on-the-harbor-board_e5f6.md",
+          "supersession_chain": [
+            "req-20260912-e5f6"
+          ]
+        },
+        {
+          "body": "**Decision:** Lamp status on the harbor board is taken from keeper logs, not from AIS.\n\n**Why:** AIS reports the ship, not the light. Keepers already record the character, eclipse, and outages in the log. The board must show what the light is doing, even when a vessel's transponder is dark.\n\n**Consequences:** The keeper log is a first-class input. AIS remains a traffic overlay. If the log is late, the board shows the last signed character and a stale badge.\n\n**How to verify:** With AIS off, posting a keeper log line updates the lamp panel within one refresh.\n",
+          "meta": {
+            "approved_by": "mara — \"files first, the light is what the keeper signed\"",
+            "author": "mara",
+            "body_sha256": "b8c437f51c86f2c028a51cb213f5ef7017f4565368b55a2467b2da155523c799",
+            "created": "2026-09-12T09:00:00Z",
+            "evidence": [
+              {
+                "ref": "note:keeper log 2026-09-12"
+              },
+              {
+                "ref": "url:https://www.iala.int/"
+              },
+              {
+                "ref": "project:BRIEF.md"
+              }
+            ],
+            "id": "dec-20260912-a1b2",
+            "project": "lighthouse-app",
+            "review_by": "2027-03-11",
+            "scope": {
+              "lane": "harbor-board",
+              "team": "keepers"
+            },
+            "sensitivity": "normal",
+            "status": "current",
+            "superseded_by": null,
+            "supersedes": [
+              "dec-20260905-c0de"
+            ],
+            "tags": [
+              "lamp",
+              "keeper-log",
+              "ais"
+            ],
+            "title": "Use keeper logs as the lamp-status source of truth",
+            "type": "decision"
+          },
+          "path": "decisions/2026-09-12_use-keeper-logs-as-the-lamp-status-source-of-truth_a1b2.md",
+          "supersession_chain": [
+            "dec-20260905-c0de",
+            "dec-20260912-a1b2"
+          ]
+        },
+        {
+          "body": "**Source:** IALA NAVGUIDE — Aids to Navigation Manual.\n\n**What we take from it:** Light-character notation, fog-signal categories, and the rule that the published character is the one mariners will look for.\n\n**Locator:** url:https://www.iala.int/\n",
+          "meta": {
+            "author": "mara",
+            "body_sha256": "3336149cd4c37aa684954549572e596f6c2dba496aa69d415fc9c91146cfbcfe",
+            "created": "2026-09-10T13:00:00Z",
+            "evidence": [
+              {
+                "ref": "url:https://www.iala.int/"
+              },
+              {
+                "ref": "note:NAVGUIDE Aids to Navigation Manual"
+              }
+            ],
+            "id": "src-20260910-c3d4",
+            "project": "lighthouse-app",
+            "review_by": "2026-12-09",
+            "scope": {
+              "lane": "references",
+              "team": "harbor-master"
+            },
+            "sensitivity": "normal",
+            "status": "current",
+            "superseded_by": null,
+            "supersedes": [],
+            "tags": [
+              "iala",
+              "character",
+              "fog"
+            ],
+            "title": "IALA Maritime Buoyage System",
+            "type": "source"
+          },
+          "path": "sources/2026-09-10_iala-maritime-buoyage-system_c3d4.md",
+          "supersession_chain": [
+            "src-20260910-c3d4"
+          ]
+        },
+        {
+          "body": "**Decision:** Poll AIS every five seconds and treat the nearest aid-to-navigation report as lamp status.\n\n**Why:** We wanted a live feed without waiting on keepers.\n\n**Consequences:** The board lied whenever AIS lagged or an AtoN transponder was offline.\n\n**How to verify:** (superseded — see dec-20260912-a1b2)\n",
+          "meta": {
+            "author": "codex:lighthouse-1",
+            "body_sha256": "389bcf3c92bdf74fcb0cb5c25d5b0d78d76418263daa4d54ca17bacff7e519e6",
+            "created": "2026-09-05T16:20:00Z",
+            "evidence": [
+              {
+                "ref": "note:early prototype treated AtoN reports as the lamp"
+              },
+              {
+                "ref": "url:https://www.iala.int/"
+              }
+            ],
+            "id": "dec-20260905-c0de",
+            "project": "lighthouse-app",
+            "review_by": "2027-03-04",
+            "scope": {
+              "lane": "harbor-board",
+              "team": "keepers"
+            },
+            "sensitivity": "normal",
+            "status": "superseded",
+            "superseded_by": "dec-20260912-a1b2",
+            "supersedes": [],
+            "tags": [
+              "lamp",
+              "ais"
+            ],
+            "title": "Poll AIS every five seconds for lamp status",
+            "type": "decision"
+          },
+          "path": "decisions/superseded/2026-09-05_poll-ais-every-five-seconds-for-lamp-status_c0de.md",
+          "supersession_chain": [
+            "dec-20260905-c0de",
+            "dec-20260912-a1b2"
+          ]
+        }
+      ]
+    }
+  ]
+}

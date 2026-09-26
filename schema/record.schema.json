@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentrooms.io/contextlib/record.schema.json",
+  "title": "ContextLib record",
+  "description": "Parsed form of a ContextLib Markdown record: front matter (meta) plus the Markdown body. On disk the file is UTF-8, starts with a --- front-matter block, and body_sha256 is the SHA-256 of the body text after the closing ---.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["meta", "body"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "type",
+        "title",
+        "status",
+        "project",
+        "created",
+        "author",
+        "evidence",
+        "supersedes",
+        "superseded_by",
+        "review_by",
+        "tags",
+        "sensitivity",
+        "body_sha256"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^(dec|req|fact|les|glo|src|ret|note)-[0-9]{8}-[0-9a-f]{4}$",
+          "description": "prefix-YYYYMMDD-4 hex. Prefixes: dec, req, fact, les, glo, src, ret, note."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "decision",
+            "requirement",
+            "fact",
+            "lesson",
+            "glossary",
+            "source",
+            "return",
+            "brief-note"
+          ]
+        },
+        "title": {"type": "string", "minLength": 1},
+        "status": {
+          "type": "string",
+          "enum": ["proposed", "current", "superseded", "retired"]
+        },
+        "project": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+        },
+        "scope": {
+          "type": "object",
+          "description": "Flat map of string scalars, for example lane and team.",
+          "additionalProperties": {"type": "string"}
+        },
+        "created": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+        },
+        "author": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Exact identity: mara, codex:<thread>, claude:<session>, cursor:<session>, or service:<name>."
+        },
+        "approved_by": {
+          "type": "string",
+          "description": "Optional verbatim approval quote."
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["ref"],
+            "properties": {
+              "ref": {
+                "type": "string",
+                "description": "project:<relative>, ssd:<relative>, room:<name>#<seq>, url:https://..., or note:<text>. Not an absolute path."
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
+          }
+        },
+        "supersedes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^(dec|req|fact|les|glo|src|ret|note)-[0-9]{8}-[0-9a-f]{4}$"
+          }
+        },
+        "superseded_by": {
+          "type": ["string", "null"],
+          "pattern": "^(dec|req|fact|les|glo|src|ret|note)-[0-9]{8}-[0-9a-f]{4}$"
+        },
+        "review_by": {
+          "type": ["string", "null"],
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        },
+        "tags": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "sensitivity": {
+          "type": "string",
+          "enum": ["normal", "private"]
+        },
+        "body_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "SHA-256 hex of the UTF-8 body after the closing --- line."
+        }
+      }
+    },
+    "body": {
+      "type": "string",
+      "description": "Markdown body. Append-only; supersede moves the file instead of editing the body."
+    }
+  }
+}

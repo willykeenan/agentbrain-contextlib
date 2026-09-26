@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentbrain-contextlib"
+version = "0.1.0"
+description = "A project library that outlives every agent session."
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "Apache-2.0"}
+authors = [{name = "KE Studios"}]
+keywords = ["agents", "context", "markdown", "mcp", "knowledge", "library"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Text Processing :: Markup :: Markdown",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://agentrooms.io"
+Documentation = "https://github.com/willykeenan/agentbrain-contextlib#readme"
+"AgentBrain" = "https://agentrooms.io"
+Repository = "https://github.com/willykeenan/agentbrain-contextlib"
+Issues = "https://github.com/willykeenan/agentbrain-contextlib/issues"
+
+[project.scripts]
+ctxlib = "agentbrain_contextlib.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["agentbrain_contextlib*"]

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ContextLib</title>
+  <style>
+    :root {
+      --paper: #f4efe6;
+      --ink: #1c1917;
+      --muted: #57534e;
+      --line: #d6d3d1;
+      --card: #fffcf7;
+      --accent: #0f4c5c;
+      --current: #166534;
+      --proposed: #a16207;
+      --superseded: #57534e;
+      --retired: #9f1239;
+    }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    }
+    header, main, footer {
+      max-width: 42rem;
+      margin: 0 auto;
+      padding: 1rem 1rem 0;
+    }
+    footer { padding-bottom: 2.5rem; color: var(--muted); font-size: 0.9rem; }
+    h1 { font-size: 1.6rem; margin: 0 0 0.25rem; letter-spacing: -0.02em; }
+    h2 { font-size: 1.15rem; margin: 1.5rem 0 0.5rem; }
+    h3 { font-size: 1.02rem; margin: 0 0 0.35rem; }
+    .lede { color: var(--muted); margin: 0 0 1rem; }
+    .search-label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.35rem; }
+    #q {
+      width: 100%;
+      font-size: 16px;
+      padding: 0.7rem 0.8rem;
+      border: 1px solid var(--line);
+      border-radius: 0.5rem;
+      background: var(--card);
+      color: var(--ink);
+    }
+    .meta-line { color: var(--muted); font-size: 0.88rem; margin: 0 0 0.75rem; }
+    .brief, .record {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 0.7rem;
+      padding: 0.9rem 1rem;
+      margin: 0 0 0.75rem;
+    }
+    .record:target { outline: 2px solid var(--accent); }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      align-items: center;
+      margin-bottom: 0.35rem;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 0.15rem 0.45rem;
+      border-radius: 999px;
+      color: #fff;
+      background: var(--muted);
+    }
+    .badge.type { background: var(--accent); }
+    .badge.current { background: var(--current); }
+    .badge.proposed { background: var(--proposed); }
+    .badge.superseded { background: var(--superseded); }
+    .badge.retired { background: var(--retired); }
+    .body { white-space: pre-wrap; overflow-wrap: anywhere; }
+    .body p { margin: 0 0 0.6rem; }
+    .body p:last-child { margin-bottom: 0; }
+    .body ul { margin: 0 0 0.6rem; padding-left: 1.2rem; }
+    .chain { font-size: 0.88rem; margin-top: 0.7rem; color: var(--muted); }
+    .chain a { color: var(--accent); }
+    .empty { color: var(--muted); padding: 1rem 0; }
+    .error { color: var(--retired); padding: 1rem 0; }
+    @media (max-width: 640px) {
+      header, main, footer { padding-left: 0.85rem; padding-right: 0.85rem; }
+      h1 { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>ContextLib</h1>
+    <p class="lede" id="lede">Read-only sample library. Markdown files stay the source of truth.</p>
+    <label class="search-label" for="q">Search records</label>
+    <input id="q" type="search" placeholder="Title, body, id, tag, status" autocomplete="off">
+  </header>
+  <main>
+    <p id="status" class="meta-line">Loading library.json…</p>
+    <section id="brief"></section>
+    <section id="records"></section>
+  </main>
+  <footer>
+    ContextLib is the open library layer of AgentBrain (agentrooms.io). This page is read-only.
+  </footer>
+  <script>
+    (function () {
+      var TYPES = [
+        "decision",
+        "requirement",
+        "fact",
+        "lesson",
+        "glossary",
+        "source",
+        "return",
+        "brief-note"
+      ];
+      var TYPE_LABEL = {
+        decision: "Decisions",
+        requirement: "Requirements",
+        fact: "Facts",
+        lesson: "Lessons",
+        glossary: "Glossary",
+        source: "Sources",
+        "return": "Returns",
+        "brief-note": "Brief notes"
+      };
+
+      function esc(value) {
+        return String(value == null ? "" : value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function md(text) {
+        var raw = String(text || "").replace(/\r\n/g, "\n");
+        var blocks = raw.split(/\n{2,}/);
+        return blocks.map(function (block) {
+          var lines = block.split("\n");
+          var list = lines.length && lines.every(function (line) {
+            return /^\s*[-*]\s+/.test(line) || line === "";
+          });
+          if (list) {
+            var items = lines.filter(Boolean).map(function (line) {
+              return "<li>" + inline(line.replace(/^\s*[-*]\s+/, "")) + "</li>";
+            }).join("");
+            return "<ul>" + items + "</ul>";
+          }
+          var first = lines[0] || "";
+          var heading = first.match(/^(#{1,3})\s+(.*)$/);
+          if (heading && lines.length === 1) {
+            var tag = "h" + heading[1].length;
+            return "<" + tag + ">" + inline(heading[2]) + "</" + tag + ">";
+          }
+          return "<p>" + inline(lines.join("\n")) + "</p>";
+        }).join("");
+      }
+
+      function inline(text) {
+        var out = esc(text);
+        out = out.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+        out = out.replace(/`([^`]+)`/g, "<code>$1</code>");
+        return out;
+      }
+
+      function recId(id) {
+        return "rec-" + String(id || "").replace(/[^A-Za-z0-9_-]/g, "-");
+      }
+
+      function chainLinks(ids) {
+        return (ids || []).map(function (id) {
+          return '<a href="#' + recId(id) + '">' + esc(id) + "</a>";
+        }).join(" → ");
+      }
+
+      function matches(rec, query) {
+        if (!query) return true;
+        var meta = rec.meta || {};
+        var hay = [
+          meta.id, meta.type, meta.title, meta.status, meta.author,
+          (meta.tags || []).join(" "), rec.body, rec.path
+        ].join(" ").toLowerCase();
+        return hay.indexOf(query) !== -1;
+      }
+
+      function render(data, query) {
+        var projects = data.projects || [];
+        var project = projects[0] || { meta: {}, brief: "", records: [] };
+        var meta = project.meta || {};
+        var records = project.records || [];
+        var q = (query || "").trim().toLowerCase();
+        var shown = records.filter(function (rec) { return matches(rec, q); });
+
+        document.getElementById("lede").textContent =
+          (meta.name || meta.slug || "Library") +
+          (meta.purpose ? " — " + meta.purpose : "");
+        document.getElementById("status").textContent =
+          shown.length + " of " + records.length + " records" +
+          (meta.slug ? " in " + meta.slug : "") +
+          (q ? " matching “" + query.trim() + "”" : "") + ".";
+
+        var briefEl = document.getElementById("brief");
+        briefEl.innerHTML = "<h2>Project brief</h2><article class=\"brief\">" +
+          md(project.brief || "") + "</article>";
+
+        var groups = {};
+        TYPES.forEach(function (t) { groups[t] = []; });
+        shown.forEach(function (rec) {
+          var type = (rec.meta && rec.meta.type) || "fact";
+          if (!groups[type]) groups[type] = [];
+          groups[type].push(rec);
+        });
+
+        var html = [];
+        TYPES.forEach(function (type) {
+          var list = groups[type] || [];
+          if (!list.length) return;
+          html.push("<h2>" + esc(TYPE_LABEL[type] || type) + "</h2>");
+          list.forEach(function (rec) {
+            var m = rec.meta || {};
+            var status = m.status || "current";
+            var supersedes = m.supersedes || [];
+            var supersededBy = m.superseded_by;
+            var chain = rec.supersession_chain || [];
+            var bits = [];
+            bits.push('<article class="record" id="' + recId(m.id) + '">');
+            bits.push('<div class="row">');
+            bits.push('<span class="badge type">' + esc(m.type || type) + "</span>");
+            bits.push('<span class="badge ' + esc(status) + '">' + esc(status) + "</span>");
+            bits.push("</div>");
+            bits.push("<h3>" + esc(m.title || m.id || "") + "</h3>");
+            bits.push('<p class="meta-line">' + esc(m.id || "") +
+              (m.created ? " · " + esc(m.created) : "") +
+              (m.author ? " · " + esc(m.author) : "") + "</p>");
+            bits.push('<div class="body">' + md(rec.body || "") + "</div>");
+            var links = [];
+            if (supersedes.length) {
+              links.push("Supersedes " + chainLinks(supersedes));
+            }
+            if (supersededBy) {
+              links.push("Superseded by " + chainLinks([supersededBy]));
+            }
+            if (chain.length > 1) {
+              links.push("Chain " + chainLinks(chain));
+            }
+            if (links.length) {
+              bits.push('<div class="chain">' + links.join("<br>") + "</div>");
+            }
+            bits.push("</article>");
+            html.push(bits.join(""));
+          });
+        });
+        if (!shown.length) {
+          html.push('<p class="empty">No records match that search.</p>');
+        }
+        document.getElementById("records").innerHTML = html.join("");
+      }
+
+      var cache = null;
+      function apply() {
+        if (!cache) return;
+        render(cache, document.getElementById("q").value);
+      }
+
+      document.getElementById("q").addEventListener("input", apply);
+
+      fetch("library.json").then(function (res) {
+        if (!res.ok) throw new Error("library.json missing");
+        return res.json();
+      }).then(function (data) {
+        cache = data;
+        apply();
+      }).catch(function () {
+        document.getElementById("status").innerHTML =
+          '<span class="error">Could not load library.json. Serve this folder as a static site.</span>';
+      });
+    })();
+  </script>
+</body>
+</html>
